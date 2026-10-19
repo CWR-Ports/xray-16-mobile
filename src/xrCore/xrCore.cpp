@@ -286,8 +286,9 @@ void xrCore::Initialize(pcstr _ApplicationName, pcstr commandLine, bool init_fs,
         struct passwd *pw = getpwuid(uid);
         if (pw)
         {
-            strncpy(UserName, pw->pw_gecos, sizeof(UserName) - 1);
-            if (UserName[0] == '\0')
+            if (pw->pw_gecos && pw->pw_gecos[0])
+                strncpy(UserName, pw->pw_gecos, sizeof(UserName) - 1);
+            else if (pw->pw_name && pw->pw_name[0])
                 strncpy(UserName, pw->pw_name, sizeof(UserName) - 1);
         }
         else
@@ -436,7 +437,7 @@ void SDLLogOutput(void* /*userdata*/, int category, SDL_LogPriority priority, co
     }
 
     static constexpr pcstr format = "%c [sdl][%s][%s]: %s";
-    const size_t size = sizeof(mark) + sizeof(from) + sizeof(type) + sizeof(format) + sizeof(message);
+    const size_t size = sizeof(mark) + xr_strlen(from) + xr_strlen(type) + xr_strlen(format) + xr_strlen(message) + 16;
     pstr buf = (pstr)xr_alloca(size);
 
     xr_sprintf(buf, size, format, mark, from, type, message);

@@ -893,6 +893,12 @@ void CLocatorAPI::setup_fs_path(pcstr fs_name)
             {
                 string_path dir;
                 sscanf(strstr(Core.Params, "-dir ") + 5, "%[^ ] ", dir);
+                const size_t dlen = xr_strlen(dir);
+                if (dlen > 0 && dir[dlen - 1] != '/' && dlen + 1 < sizeof(dir))
+                {
+                    dir[dlen] = '/';
+                    dir[dlen + 1] = '\0';
+                }
                 pref_path = SDL_strdup(dir);
             }
             else if (strstr(Core.Params, "-shoc") || strstr(Core.Params, "-soc"))

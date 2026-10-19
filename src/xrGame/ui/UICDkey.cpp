@@ -239,12 +239,15 @@ void GetPlayerName_FromRegistry(char* name, u32 const name_size)
     struct passwd* pw = getpwuid(uid);
     if (pw)
     {
-        strcpy(name, pw->pw_gecos);
-        char* pos = strchr(name, ','); // pw_gecos return string
-        if (NULL != pos)
-            *pos = 0;
-        if (0 == name[0])
-            strcpy(name, pw->pw_name);
+        if (pw->pw_gecos && pw->pw_gecos[0])
+        {
+            xr_strcpy(name, name_size, pw->pw_gecos);
+            char* pos = strchr(name, ','); // pw_gecos return string
+            if (NULL != pos)
+                *pos = 0;
+        }
+        if (0 == name[0] && pw->pw_name && pw->pw_name[0])
+            xr_strcpy(name, name_size, pw->pw_name);
     }
 #else
 #   error Select or add implementation for your platform
