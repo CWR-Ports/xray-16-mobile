@@ -99,6 +99,11 @@ extern "C" XR_EXPORT int SDL_main(int argc, char* argv[])
             {
                 strcat(commandLine, argv[i]);
                 strcat(commandLine, " ");
+
+                if (strcmp(argv[i], "-dir") == 0 && (i + 1) < argc)
+                {
+                    chdir(argv[i + 1]);
+                }
             }
 
             result = entry_point(commandLine);

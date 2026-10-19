@@ -218,15 +218,34 @@ void xrCore::Initialize(pcstr _ApplicationName, pcstr commandLine, bool init_fs,
         char* base_path = SDL_GetBasePath();
         if (!base_path)
         {
-            if (strstr(Core.Params, "-shoc") || strstr(Core.Params, "-soc"))
+            if (strstr(Core.Params, "-dir "))
+            {
+                string_path dir;
+                sscanf(strstr(Core.Params, "-dir ") + 5, "%[^ ] ", dir);
+                base_path = SDL_strdup(dir);
+            }
+            else if (strstr(Core.Params, "-shoc") || strstr(Core.Params, "-soc"))
                 base_path = SDL_GetPrefPath("GSC Game World", "S.T.A.L.K.E.R. - Shadow of Chernobyl");
             else if (strstr(Core.Params, "-cs"))
                 base_path = SDL_GetPrefPath("GSC Game World", "S.T.A.L.K.E.R. - Clear Sky");
             else
                 base_path = SDL_GetPrefPath("GSC Game World", "S.T.A.L.K.E.R. - Call of Pripyat");
         }
-        SDL_strlcpy(ApplicationPath, base_path, sizeof(ApplicationPath));
-        SDL_free(base_path);
+        if (base_path)
+        {
+            SDL_strlcpy(ApplicationPath, base_path, sizeof(ApplicationPath));
+            SDL_free(base_path);
+        }
+        else
+        {
+            getcwd(ApplicationPath, sizeof(ApplicationPath));
+        }
+        const size_t appLen = xr_strlen(ApplicationPath);
+        if (appLen > 0 && ApplicationPath[appLen - 1] != '/' && appLen + 1 < sizeof(ApplicationPath))
+        {
+            ApplicationPath[appLen] = '/';
+            ApplicationPath[appLen + 1] = '\0';
+        }
 #else
 #   error Select or add implementation for your platform
 #endif
@@ -244,6 +263,12 @@ void xrCore::Initialize(pcstr _ApplicationName, pcstr commandLine, bool init_fs,
 #if defined(XR_PLATFORM_WINDOWS)
         GetCurrentDirectory(sizeof(WorkingPath), WorkingPath);
 #elif defined(XR_PLATFORM_POSIX)
+        if (strstr(Params, "-dir "))
+        {
+            string_path dir;
+            sscanf(strstr(Params, "-dir ") + 5, "%[^ ] ", dir);
+            chdir(dir);
+        }
         getcwd(WorkingPath, sizeof(WorkingPath));
 #else
 #   error Select or add implementation for your platform
