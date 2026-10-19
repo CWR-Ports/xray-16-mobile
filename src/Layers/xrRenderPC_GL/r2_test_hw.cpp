@@ -38,7 +38,7 @@ BOOL xrRender_test_hw()
 {
     ZoneScoped;
 
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
     return TRUE;
 #endif
 

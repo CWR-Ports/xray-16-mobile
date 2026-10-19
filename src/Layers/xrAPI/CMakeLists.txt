@@ -16,9 +16,11 @@ target_compile_definitions(xrAPI
     XRAPI_EXPORTS
 )
 
-set_target_properties(xrAPI PROPERTIES
-    PREFIX ""
-)
+if (NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
+    set_target_properties(xrAPI PROPERTIES
+        PREFIX ""
+    )
+endif()
 
 target_precompile_headers(xrAPI
     PRIVATE

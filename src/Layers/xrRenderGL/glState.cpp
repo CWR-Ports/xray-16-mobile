@@ -39,7 +39,7 @@ glState* glState::Create()
     return xr_new<glState>();
 }
 
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
 namespace
 {
 GLuint boundSamplers[CTexture::mtMaxCombinedShaderTextures]{};
@@ -54,7 +54,7 @@ void glState::Apply()
     {
         if (m_samplerArray[stage])
         {
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
             if (boundSamplers[stage] != m_samplerArray[stage])
             {
                 boundSamplers[stage] = m_samplerArray[stage];
@@ -68,7 +68,7 @@ void glState::Apply()
             {
                 CHK_GL(glSamplerParameterf(m_samplerArray[stage], GL_TEXTURE_MIN_LOD, 0.f));
                 CHK_GL(glSamplerParameterf(m_samplerArray[stage], GL_TEXTURE_MAX_LOD, FLT_MAX));
-#ifndef XR_PLATFORM_WEB
+#ifndef XR_RENDER_GLES
                 CHK_GL(glSamplerParameterf(m_samplerArray[stage], GL_TEXTURE_LOD_BIAS, ps_r__tf_Mipbias));
 #endif
             }
@@ -91,7 +91,7 @@ void glState::Apply()
         m_pDepthStencilState.StencilDepthFailOp
     );
 
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
     RCache.set_DepthWrite(m_pDepthStencilState.DepthWriteMask ? TRUE : FALSE);
     RCache.set_Blend(m_pBlendState.BlendEnable, m_pBlendState.SrcBlend, m_pBlendState.DestBlend,
         m_pBlendState.SrcBlendAlpha, m_pBlendState.DestBlendAlpha, m_pBlendState.BlendOp,
@@ -259,7 +259,7 @@ void glState::UpdateSamplerState(u32 stage, u32 name, u32 value)
         break;
     case D3DSAMP_BORDERCOLOR: /* D3DCOLOR */
     {
-#ifndef XR_PLATFORM_WEB
+#ifndef XR_RENDER_GLES
         GLuint color[] = {color_get_R(value), color_get_G(value), color_get_B(value), color_get_A(value)};
         CHK_GL(glSamplerParameterIuiv(m_samplerArray[stage], GL_TEXTURE_BORDER_COLOR, color));
 #endif
@@ -278,7 +278,7 @@ void glState::UpdateSamplerState(u32 stage, u32 name, u32 value)
             value, currentFilter, true)));
         break;
     case D3DSAMP_MIPMAPLODBIAS: /* float Mipmap LOD bias */
-#ifndef XR_PLATFORM_WEB
+#ifndef XR_RENDER_GLES
         CHK_GL(glSamplerParameterf(m_samplerArray[stage], GL_TEXTURE_LOD_BIAS, value));
 #endif
         break;

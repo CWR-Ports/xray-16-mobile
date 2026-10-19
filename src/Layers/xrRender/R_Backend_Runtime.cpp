@@ -78,7 +78,7 @@ void CBackend::Invalidate()
     C = nullptr;
 
     alpha_ref = u32(-1);
-#ifndef XR_PLATFORM_WEB
+#ifndef XR_RENDER_GLES
     stencil_enable = u32(-1);
     stencil_func = u32(-1);
     stencil_ref = u32(-1);
@@ -182,7 +182,7 @@ void CBackend::set_Textures(STextureList* textures_list)
     //    return;
     T = textures_list;
     // If resources weren't set at all we should clear from resource #0.
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
     u32 usedPS = 0;
     u32 usedVS = 0;
 #endif
@@ -210,7 +210,7 @@ void CBackend::set_Textures(STextureList* textures_list)
             // ordinary pixel surface
             if ((int)load_id > _last_ps)
                 _last_ps = load_id;
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
             usedPS |= 1u << load_id;
 #endif
             if (textures_ps[load_id] != load_surf || (load_surf && (load_surf->last_slice != load_surf->curr_slice)))
@@ -224,7 +224,7 @@ void CBackend::set_Textures(STextureList* textures_list)
                     load_surf->bind(*this, load_id);
                     //load_surf->Apply(load_id);
                     load_surf->last_slice = load_surf->curr_slice;
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
                     occupied_texture_units |= 1u << load_id;
 #endif
                 }
@@ -242,7 +242,7 @@ void CBackend::set_Textures(STextureList* textures_list)
             u32 load_id_remapped = load_id - CTexture::rstVertex;
             if ((int)load_id_remapped > _last_vs)
                 _last_vs = load_id_remapped;
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
             usedVS |= 1u << load_id_remapped;
 #endif
             if (textures_vs[load_id_remapped] != load_surf)
@@ -255,7 +255,7 @@ void CBackend::set_Textures(STextureList* textures_list)
                     PGO(Msg("PGO:tex%d:%s", load_id, load_surf->cName.c_str()));
                     load_surf->bind(*this, load_id);
                     //load_surf->Apply(load_id);
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
                     occupied_texture_units |= 1u << load_id;
 #endif
                 }
@@ -358,7 +358,7 @@ void CBackend::set_Textures(STextureList* textures_list)
     }
 
     // clear remaining stages (PS)
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
     for (u32 _last_ps = 0; _last_ps < CTexture::mtMaxPixelShaderTextures; _last_ps++)
     {
         if (usedPS & (1u << _last_ps))
@@ -392,7 +392,7 @@ void CBackend::set_Textures(STextureList* textures_list)
 #endif
     }
     // clear remaining stages (VS)
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
     for (u32 _last_vs = 0; _last_vs < CTexture::mtMaxVertexShaderTextures; _last_vs++)
     {
         if (usedVS & (1u << _last_vs))

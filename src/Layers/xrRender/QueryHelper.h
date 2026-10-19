@@ -64,7 +64,7 @@ IC HRESULT CreateQuery(GLuint* pQuery, D3D_QUERY type)
     return S_OK;
 }
 
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
 constexpr GLenum OCCLUSION_QUERY_TARGET = GL_ANY_SAMPLES_PASSED_CONSERVATIVE;
 
 IC HRESULT GetData(GLuint query, void* pData, u32 DataSize)

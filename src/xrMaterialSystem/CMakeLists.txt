@@ -29,9 +29,11 @@ target_compile_definitions(xrMaterialSystem
     XRMTL_LIB_EXPORTS
 )
 
-set_target_properties(xrMaterialSystem PROPERTIES
-    PREFIX ""
-)
+if (NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
+    set_target_properties(xrMaterialSystem PROPERTIES
+        PREFIX ""
+    )
+endif()
 
 target_precompile_headers(xrMaterialSystem
     PRIVATE

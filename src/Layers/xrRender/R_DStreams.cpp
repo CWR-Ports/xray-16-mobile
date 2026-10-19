@@ -12,7 +12,7 @@ namespace xray::render::RENDER_NAMESPACE
 int rsDVB_Size = 4096; //Fixed: (bytes_need<=mSize) && vl_Count
 int rsDIB_Size = 512;
 
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
 constexpr bool DiscardOnEveryLock = true;
 #else
 constexpr bool DiscardOnEveryLock = false;
@@ -86,7 +86,7 @@ void _VertexStream::Unlock(u32 Count, u32 Stride)
 #endif
     mPosition += Count * Stride;
 
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
     pVB.Unmap(Count * Stride);
 #else
     pVB.Unmap();
@@ -155,7 +155,7 @@ void _IndexStream::Unlock(u32 RealCount)
 {
     PGO(Msg("PGO:IB_UNLOCK:%d", RealCount));
     mPosition += RealCount;
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
     pIB.Unmap(RealCount * sizeof(u16));
 #else
     pIB.Unmap();

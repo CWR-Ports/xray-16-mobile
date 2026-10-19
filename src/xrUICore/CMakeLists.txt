@@ -145,9 +145,11 @@ target_compile_definitions(xrUICore
     PURE_DYNAMIC_CAST
 )
 
-set_target_properties(xrUICore PROPERTIES
-    PREFIX ""
-)
+if (NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
+    set_target_properties(xrUICore PROPERTIES
+        PREFIX ""
+    )
+endif()
 
 target_precompile_headers(xrUICore
     PRIVATE

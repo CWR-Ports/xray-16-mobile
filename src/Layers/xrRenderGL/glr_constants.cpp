@@ -33,7 +33,7 @@ BOOL R_constant_table::parse(void* _desc, u32 destination)
     GLint uniformCount;
     CHK_GL(glGetProgramiv(program, GL_ACTIVE_UNIFORMS, &uniformCount));
 
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
     u16 samplerStage = 0;
 #endif
 
@@ -124,7 +124,7 @@ BOOL R_constant_table::parse(void* _desc, u32 destination)
                 C->handler = &binder_sampler;
                 R_constant_load& L = C->samp;
                 if (destination & RC_dest_all)
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
                     L.index = samplerStage;
 #else
                     L.index = r_index;
@@ -141,7 +141,7 @@ BOOL R_constant_table::parse(void* _desc, u32 destination)
                 R_ASSERT(C->type == RC_sampler);
                 R_ASSERT(C->handler == &binder_sampler);
                 R_constant_load& L = C->samp;
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
                 R_ASSERT((destination & RC_dest_all) || L.index == r_index);
 #else
                 R_ASSERT(L.index == r_index);
@@ -150,7 +150,7 @@ BOOL R_constant_table::parse(void* _desc, u32 destination)
                 R_ASSERT(L.location == r_location);
                 R_ASSERT(L.program == program);
             }
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
             ++samplerStage;
 #endif
         }

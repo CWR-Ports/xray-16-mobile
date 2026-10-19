@@ -137,8 +137,20 @@ set(CCOPTIONS "${CCOPT};${XCFLAGS}")
 
 target_compile_options(xrLuaJIT PRIVATE ${CCOPTIONS})
 
+set(TARGET_PROBE_FLAGS)
+if (CMAKE_C_COMPILER_TARGET)
+    list(APPEND TARGET_PROBE_FLAGS "--target=${CMAKE_C_COMPILER_TARGET}")
+elseif (ANDROID_LLVM_TRIPLE)
+    list(APPEND TARGET_PROBE_FLAGS "--target=${ANDROID_LLVM_TRIPLE}")
+elseif (CMAKE_SYSTEM_PROCESSOR STREQUAL "aarch64" OR ANDROID_ABI STREQUAL "arm64-v8a")
+    list(APPEND TARGET_PROBE_FLAGS "--target=aarch64-linux-android")
+endif()
+if (CMAKE_SYSROOT)
+    list(APPEND TARGET_PROBE_FLAGS "--sysroot=${CMAKE_SYSROOT}")
+endif()
+
 execute_process(
-    COMMAND ${CMAKE_C_COMPILER} ${CCOPTIONS} -E lj_arch.h -dM
+    COMMAND ${CMAKE_C_COMPILER} ${TARGET_PROBE_FLAGS} ${CCOPTIONS} -E lj_arch.h -dM
     WORKING_DIRECTORY "${LUAJIT_DIR}"
     OUTPUT_VARIABLE TESTARCH_OUTPUT
     ERROR_VARIABLE TESTARCH_ERROR
@@ -579,8 +591,12 @@ target_compile_options(xrLuaJIT
     -Wno-comment
 )
 
+if (NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
+    set_target_properties(xrLuaJIT PROPERTIES
+        PREFIX ""
+    )
+endif()
 set_target_properties(xrLuaJIT PROPERTIES
-    PREFIX ""
     UNITY_BUILD OFF
 )
 

@@ -63,6 +63,8 @@ public:
 
 #ifdef XR_PLATFORM_WEB
     EMSCRIPTEN_WEBGL_CONTEXT_HANDLE m_webgl{};
+#endif
+#ifdef XR_RENDER_GLES
     bool BaseVertexDrawSupported{};
 #endif
 
@@ -70,14 +72,14 @@ public:
     pcstr OpenGLVersionString;
     pcstr ShadingVersion;
     bool ComputeShadersSupported;
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
     u32 TextureUploadUnit{};
 #endif
 };
 
 struct texture_upload_unit
 {
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
     const GLenum target;
     explicit texture_upload_unit(GLenum target);
     ~texture_upload_unit();

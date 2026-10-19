@@ -60,9 +60,11 @@ target_compile_definitions(xrGameSpy
     XRAY_DISABLE_GAMESPY_WARNINGS
 )
 
-set_target_properties(xrGameSpy PROPERTIES
-    PREFIX ""
-)
+if (NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
+    set_target_properties(xrGameSpy PROPERTIES
+        PREFIX ""
+    )
+endif()
 
 target_precompile_headers(xrGameSpy
     PRIVATE

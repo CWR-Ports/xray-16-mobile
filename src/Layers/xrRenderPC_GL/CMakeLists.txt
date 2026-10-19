@@ -415,6 +415,14 @@ target_link_libraries(xrRender_GL
     xrImGui
 )
 
+if (CMAKE_SYSTEM_NAME STREQUAL "Android")
+    target_link_libraries(xrRender_GL
+        PRIVATE
+        GLESv3
+        EGL
+    )
+endif()
+
 target_compile_definitions(xrRender_GL
     PRIVATE
     XRRENDER_GL_EXPORTS
@@ -423,9 +431,11 @@ target_compile_definitions(xrRender_GL
     PURE_DYNAMIC_CAST
 )
 
-set_target_properties(xrRender_GL PROPERTIES
-    PREFIX ""
-)
+if (NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
+    set_target_properties(xrRender_GL PROPERTIES
+        PREFIX ""
+    )
+endif()
 
 target_precompile_headers(xrRender_GL
     PRIVATE

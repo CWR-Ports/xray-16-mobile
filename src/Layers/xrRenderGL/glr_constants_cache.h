@@ -2,7 +2,7 @@
 
 namespace xray::render::RENDER_NAMESPACE
 {
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
 class UniformShadow
 {
 public:
@@ -40,7 +40,7 @@ private:
     ICF void set(R_constant* C, R_constant_load& L, const Fmatrix& A)
     {
         VERIFY(RC_float == C->type);
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
         if (!g_uniformShadow.Update(L.program, L.location, &A, sizeof(A)))
             return;
 #endif
@@ -89,7 +89,7 @@ private:
     ICF void set(R_constant* C, R_constant_load& L, const Fvector4& A)
     {
         VERIFY(RC_float == C->type);
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
         if (!g_uniformShadow.Update(L.program, L.location, &A, sizeof(A)))
             return;
 #endif
@@ -128,7 +128,7 @@ private:
     ICF void set(R_constant* C, R_constant_load& L, float x, float y, float z, float w)
     {
         VERIFY(RC_float == C->type);
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
         const Fvector4 value{ x, y, z, w };
         if (!g_uniformShadow.Update(L.program, L.location, &value, sizeof(value)))
             return;
@@ -170,7 +170,7 @@ private:
     {
         VERIFY(RC_float == C->type);
         VERIFY(RC_1x1 == L.cls);
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
         if (!g_uniformShadow.Update(L.program, L.location, &A, sizeof(A)))
             return;
 #endif
@@ -184,7 +184,7 @@ private:
     {
         VERIFY(RC_int == C->type);
         VERIFY(RC_1x1 == L.cls);
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
         if (!g_uniformShadow.Update(L.program, L.location, &A, sizeof(A)))
             return;
 #endif
@@ -271,7 +271,7 @@ public:
         set(C, L, x, y, z, w);
     }
 
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
     ICF void seta(R_constant* C, u32 e, const Fvector4* values, u32 count)
     {
         VERIFY(RC_float == C->type);

@@ -43,9 +43,11 @@ target_compile_definitions(xrNetServer
     XR_NETSERVER_EXPORTS
 )
 
-set_target_properties(xrNetServer PROPERTIES
-    PREFIX ""
-)
+if (NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
+    set_target_properties(xrNetServer PROPERTIES
+        PREFIX ""
+    )
+endif()
 
 target_precompile_headers(xrNetServer
     PRIVATE

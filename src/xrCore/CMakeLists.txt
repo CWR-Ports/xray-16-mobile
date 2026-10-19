@@ -493,9 +493,11 @@ else()
     target_compile_definitions(xrCore PRIVATE USE_PURE_ALLOC)
 endif()
 
-set_target_properties(xrCore PROPERTIES
-    PREFIX ""
-)
+if (NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
+    set_target_properties(xrCore PROPERTIES
+        PREFIX ""
+    )
+endif()
 
 target_precompile_headers(xrCore
     PRIVATE

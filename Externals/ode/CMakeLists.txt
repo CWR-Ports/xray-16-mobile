@@ -91,8 +91,12 @@ target_compile_definitions(xrODE
     "$<$<CONFIG:Release,ReleaseMasterGold>:dNODEBUG>"
 )
 
+if (NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
+    set_target_properties(xrODE PROPERTIES
+        PREFIX ""
+    )
+endif()
 set_target_properties(xrODE PROPERTIES
-    PREFIX ""
     UNITY_BUILD OFF
 )
 

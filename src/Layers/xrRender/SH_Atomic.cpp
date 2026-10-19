@@ -193,7 +193,7 @@ SDeclaration::~SDeclaration()
         _RELEASE(iLayout->second);
     }
 #elif defined(USE_OGL)
-#   ifdef XR_PLATFORM_WEB
+#   ifdef XR_RENDER_GLES
     ForgetVertexArrays(this);
 #   endif
     glDeleteVertexArrays(1, &dcl);

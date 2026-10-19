@@ -94,7 +94,7 @@ void CTexture::apply_theora(CBackend& cmd_list, u32 dwStage)
         u32 _w = pTheora->Width(true);
         u32 _h = pTheora->Height(true);
 
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
         xr_vector<u32> frame(_w * _h);
         int framePos = 0;
         pTheora->DecompressFrame(frame.data(), 0, framePos);
@@ -369,7 +369,7 @@ void CTexture::desc_update()
     desc_cache = pSurface;
     if (pSurface && (GL_TEXTURE_2D == desc || GL_TEXTURE_2D_MULTISAMPLE == desc))
     {
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
         m_width = m_loaded_width;
         m_height = m_loaded_height;
 #else

@@ -424,9 +424,11 @@ target_compile_definitions(xrPhysics
     PURE_DYNAMIC_CAST
 )
 
-set_target_properties(xrPhysics PROPERTIES
-    PREFIX ""
-)
+if (NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
+    set_target_properties(xrPhysics PROPERTIES
+        PREFIX ""
+    )
+endif()
 
 target_precompile_headers(xrPhysics
     PRIVATE

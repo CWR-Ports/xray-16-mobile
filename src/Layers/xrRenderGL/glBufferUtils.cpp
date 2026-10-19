@@ -5,7 +5,7 @@
 
 namespace xray::render::RENDER_NAMESPACE
 {
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
 enum
 {
     LOCKFLAGS_FLUSH  = GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT,
@@ -40,7 +40,7 @@ static HRESULT CreateBuffer(GLuint* pBuffer, const void* pData, u32 dataSize, bo
     const GLenum target = bIndexBuffer ? GL_ELEMENT_ARRAY_BUFFER : GL_ARRAY_BUFFER;
 
     glGenBuffers(1, pBuffer);
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
     if (bIndexBuffer)
         BindVertexArray(0);
 #endif
@@ -196,7 +196,7 @@ void SetGLVertexPointer(SDeclaration* decl, u32 baseOffset)
     SetVertexDeclaration(decl->dcl_code.data(), baseOffset);
 }
 
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
 namespace
 {
 struct VertexArrayKey
@@ -344,7 +344,7 @@ void VertexStagingBuffer::Destroy()
 
     if (m_DeviceBuffer)
     {
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
         ForgetVertexArrays(m_DeviceBuffer);
 #endif
         glDeleteBuffers(1, &m_DeviceBuffer);
@@ -439,7 +439,7 @@ void IndexStagingBuffer::Destroy()
 
     if (m_DeviceBuffer)
     {
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
         ForgetVertexArrays(m_DeviceBuffer);
 #endif
         glDeleteBuffers(1, &m_DeviceBuffer);
@@ -464,7 +464,7 @@ size_t IndexStagingBuffer::GetVideoMemoryUsage() const
         return 0;
 
     GLint bufferSize;
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
     glBindBuffer(GL_COPY_READ_BUFFER, m_DeviceBuffer);
     CHK_GL(glGetBufferParameteriv(GL_COPY_READ_BUFFER, GL_BUFFER_SIZE, &bufferSize));
 #else
@@ -483,7 +483,7 @@ VertexStreamBuffer::~VertexStreamBuffer()
 void VertexStreamBuffer::Create(size_t size)
 {
     CreateVertexBuffer(&m_DeviceBuffer, nullptr, size, true);
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
     streamVertexBuffers.push_back(m_DeviceBuffer);
     m_HostBuffer.resize(size);
 #endif
@@ -495,7 +495,7 @@ void VertexStreamBuffer::Destroy()
     if (m_DeviceBuffer == 0)
         return;
 
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
     ForgetVertexArrays(m_DeviceBuffer);
     streamVertexBuffers.erase(std::find(streamVertexBuffers.begin(), streamVertexBuffers.end(), m_DeviceBuffer));
 #endif
@@ -503,7 +503,7 @@ void VertexStreamBuffer::Destroy()
     m_DeviceBuffer = 0;
 }
 
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
 void* VertexStreamBuffer::Map(size_t offset, size_t size, bool flush /*= false*/)
 {
     VERIFY(m_DeviceBuffer);
@@ -566,7 +566,7 @@ IndexStreamBuffer::~IndexStreamBuffer()
 void IndexStreamBuffer::Create(size_t size)
 {
     CreateIndexBuffer(&m_DeviceBuffer, nullptr, size, true);
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
     m_HostBuffer.resize(size);
 #endif
     AddRef();
@@ -577,20 +577,20 @@ void IndexStreamBuffer::Destroy()
     if (m_DeviceBuffer == 0)
         return;
 
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
     ForgetVertexArrays(m_DeviceBuffer);
 #endif
     glDeleteBuffers(1, &m_DeviceBuffer);
     m_DeviceBuffer = 0;
 }
 
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
 constexpr GLenum INDEX_UPLOAD_TARGET = GL_COPY_WRITE_BUFFER;
 #else
 constexpr GLenum INDEX_UPLOAD_TARGET = GL_ELEMENT_ARRAY_BUFFER;
 #endif
 
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
 void* IndexStreamBuffer::Map(size_t offset, size_t size, bool flush /*= false*/)
 {
     VERIFY(m_DeviceBuffer);

@@ -31,7 +31,12 @@ void* ModuleHandle::Open(pcstr moduleName)
 
     Log("Loading module:", moduleName);
 
-    xr_string buf(moduleName);
+    xr_string buf;
+#ifdef XR_PLATFORM_ANDROID
+    if (strncmp(moduleName, "lib", 3) != 0)
+        buf = "lib";
+#endif
+    buf += moduleName;
 #ifdef XR_PLATFORM_WINDOWS
     buf += ".dll";
 #elif defined(XR_PLATFORM_APPLE)

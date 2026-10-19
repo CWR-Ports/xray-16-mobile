@@ -126,6 +126,34 @@ void CHW::CreateDevice(SDL_Window* hWnd)
     BaseVertexDrawSupported =
         emscripten_webgl_enable_extension(m_webgl, "WEBGL_draw_instanced_base_vertex_base_instance");
     Msg("* WebGL base vertex draws: %s", BaseVertexDrawSupported ? "extension" : "attribute re-pointing");
+#elif defined(XR_PLATFORM_ANDROID)
+    m_context = SDL_GL_CreateContext(m_window);
+    if (m_context == nullptr)
+    {
+        // Try falling back to GLES 3.0 if 3.2 is not supported
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+        m_context = SDL_GL_CreateContext(m_window);
+    }
+    if (m_context == nullptr)
+    {
+        Log("! OpenGL ES: could not create drawing context:", SDL_GetError());
+        return;
+    }
+
+    if (MakeContextCurrent(IRender::PrimaryContext) != 0)
+    {
+        Log("! OpenGL ES: could not make context current:", SDL_GetError());
+        return;
+    }
+
+    int version;
+    {
+        ZoneScopedN("gladLoadGLES2");
+        version = gladLoadGLES2(reinterpret_cast<GLADloadfunc>(SDL_GL_GetProcAddress));
+    }
+    BaseVertexDrawSupported = (glDrawElementsBaseVertex != nullptr);
+    Msg("* OpenGL ES base vertex draws: %s", BaseVertexDrawSupported ? "available" : "attribute re-pointing");
 #else
     m_context = SDL_GL_CreateContext(m_window);
     if (m_context == nullptr)
@@ -180,7 +208,7 @@ void CHW::CreateDevice(SDL_Window* hWnd)
     Msg("* GPU OpenGL shading language version: %s", ShadingVersion);
     Msg("* GPU OpenGL VTF units: [%d] CTI units: [%d]", iMaxVTFUnits, iMaxCTIUnits);
 
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
     TextureUploadUnit = u32(iMaxCTIUnits) - 1;
     R_ASSERT2(TextureUploadUnit >= CTexture::rstVertex + CTexture::mtMaxVertexShaderTextures,
         "too few texture units for a dedicated upload unit");
@@ -232,7 +260,11 @@ void CHW::SetPrimaryAttributes(u32& windowFlags)
 #endif
     windowFlags |= SDL_WINDOW_OPENGL;
 
+#if defined(XR_PLATFORM_ANDROID)
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+#else
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+#endif
 
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
@@ -245,8 +277,13 @@ void CHW::SetPrimaryAttributes(u32& windowFlags)
 
     if (!strstr(Core.Params, "-no_gl_context"))
     {
+#if defined(XR_PLATFORM_ANDROID)
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+#else
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+#endif
     }
 }
 
@@ -352,7 +389,7 @@ void CHW::EndPixEvent() const
 }
 } // namespace xray::render::RENDER_NAMESPACE
 
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
 namespace xray::render::RENDER_NAMESPACE
 {
 texture_upload_unit::texture_upload_unit(GLenum target) : target(target)

@@ -5,6 +5,12 @@ else()
 endif()
 
 add_subdirectory(luabind)
+if (CMAKE_SYSTEM_NAME STREQUAL "Android")
+    set_target_properties(xrLuabind PROPERTIES
+        PREFIX "lib"
+    )
+endif()
+
 add_subdirectory(xrLuaFix)
 add_subdirectory(OPCODE)
 add_subdirectory(ode)

@@ -55,47 +55,47 @@ export ANDROID_NDK_HOME=/opt/android-ndk
 ### Phase 1: Decouple OpenGL ES from WebAssembly in Engine
 The GLES 3.0 renderer and ESSL shader translator already exist in `xrRenderGL` (from the WebGL2 work in PR #2153), but are hardcoded behind `#ifdef XR_PLATFORM_WEB`.
 
-- [ ] **1.1. Introduce `XR_RENDER_GLES` macro** in `src/Common/Platform.hpp`:
+- [x] **1.1. Introduce `XR_RENDER_GLES` macro** in `src/Common/Platform.hpp`:
   - Define `XR_RENDER_GLES` when either `XR_PLATFORM_WEB` or `XR_PLATFORM_ANDROID` is set.
-- [ ] **1.2. Configure SDL2 context for GLES on Android** in `src/Layers/xrRenderGL/glHW.cpp`:
+- [x] **1.2. Configure SDL2 context for GLES on Android** in `src/Layers/xrRenderGL/glHW.cpp`:
   - In `CHW::SetPrimaryAttributes`: request `SDL_GL_CONTEXT_PROFILE_ES` with major `3` and minor `2` (or `0`).
   - In `CHW::CreateDevice`: call `gladLoadGLES2(reinterpret_cast<GLADloadfunc>(SDL_GL_GetProcAddress))` on Android instead of desktop `gladLoadGL`.
-- [ ] **1.3. Route shader compiler through ESSL rewriter on Android** in `src/Layers/xrRenderPC_GL/rgl_shaders.cpp`:
+- [x] **1.3. Route shader compiler through ESSL rewriter on Android** in `src/Layers/xrRenderPC_GL/rgl_shaders.cpp`:
   - Invoke `essl::rewrite()` from `rgl_essl_web.h` whenever `XR_RENDER_GLES` is active.
   - Shaders will output `#version 300 es` with location attributes and precision qualifiers.
-- [ ] **1.4. Migrate GLES buffer and texture workarounds** from `XR_PLATFORM_WEB` to `XR_RENDER_GLES`:
+- [x] **1.4. Migrate GLES buffer and texture workarounds** from `XR_PLATFORM_WEB` to `XR_RENDER_GLES`:
   - `src/Layers/xrRenderGL/glBufferUtils.cpp` (buffer flags, base-vertex calls).
   - `src/Layers/xrRenderGL/glState.cpp` (texture border colors, LOD bias, sampler state).
   - `src/Layers/xrRenderGL/glTexture.cpp` (`gli::gl::PROFILE_ES30` and format swizzling).
   - `src/Layers/xrRenderGL/glSH_RT.cpp` (FBO attachment and viewport masks).
   - `src/Layers/xrRenderGL/glr_constants_cache.h` (`UniformShadow` state cache).
-- [ ] **1.5. Validate all shaders** with `misc/web/tools/essl_check.sh` to ensure 100% ESSL compatibility.
+- [x] **1.5. Validate all shaders** with `misc/web/tools/essl_check.sh` to ensure 100% ESSL compatibility.
 
 ---
 
 ### Phase 2: Android ARM64 Target Dependencies
 Cross-compiling with NDK requires target ARM64 (`aarch64-linux-android`) libraries.
 
-- [ ] **2.1. Prepare ARM64 target libraries** for:
+- [x] **2.1. Prepare ARM64 target libraries** for:
   - `SDL2` (v2.28+ / v2.30+)
   - `OpenAL Soft` (with OpenSL ES / AAudio backends)
   - `libogg`
   - `libvorbis` & `libvorbisfile`
   - `libtheora`
   - `liblzo2`
-- [ ] **2.2. Automate dependency building** via a CMake helper or script (e.g. `scripts/build_android_deps.sh`).
+- [x] **2.2. Automate dependency building** via a CMake helper or script (e.g. `scripts/build_android_deps.sh`).
 
 ---
 
 ### Phase 3: Android Engine Architecture & Entry Point
 Android cannot execute standalone ELF binaries; it loads native `.so` shared libraries inside an APK.
 
-- [ ] **3.1. Update `src/xr_3da/CMakeLists.txt`**:
+- [x] **3.1. Update `src/xr_3da/CMakeLists.txt`**:
   - When `CMAKE_SYSTEM_NAME STREQUAL "Android"`, compile `xr_3da` as a shared library (`add_library(main SHARED ...)` or `libmain.so`).
-- [ ] **3.2. Implement `SDL_main` entry point** in `src/xr_3da/entry_point.cpp`:
+- [x] **3.2. Implement `SDL_main` entry point** in `src/xr_3da/entry_point.cpp`:
   - Add `#if defined(XR_PLATFORM_ANDROID)` exporting `extern "C" int SDL_main(int argc, char* argv[])`.
   - Forward arguments directly to `entry_point(commandLine)`.
-- [ ] **3.3. Preserve library naming conventions**:
+- [x] **3.3. Preserve library naming conventions**:
   - Ensure all shared library targets keep the `lib` prefix (e.g. `libxrRender_GL.so`, `libxrGame.so`, `libxrCore.so`) so the Android APK packager does not discard them.
 
 ---

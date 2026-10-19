@@ -30,6 +30,13 @@ if (NOT CMAKE_SYSTEM_NAME STREQUAL "OpenBSD" AND NOT CMAKE_SYSTEM_NAME STREQUAL 
     )
 endif()
 
+if (CMAKE_SYSTEM_NAME STREQUAL "Android")
+    target_link_libraries(xrImGui
+        PUBLIC
+        GLESv3
+    )
+endif()
+
 target_compile_definitions(xrImGui
     PUBLIC
     IMGUI_DISABLE_OBSOLETE_KEYIO
@@ -40,7 +47,11 @@ target_compile_definitions(xrImGui
     IMGUI_EXPORTS
 )
 
+if (NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
+    set_target_properties(xrImGui PROPERTIES
+        PREFIX ""
+    )
+endif()
 set_target_properties(xrImGui PROPERTIES
-    PREFIX ""
     POSITION_INDEPENDENT_CODE ${BUILD_SHARED_LIBS}
 )

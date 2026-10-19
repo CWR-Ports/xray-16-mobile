@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
 #include "rgl_essl_web.h"
 #endif
 #include "r2.h"
@@ -227,7 +227,7 @@ HRESULT CRender::shader_compile(pcstr name, IReader* fs, pcstr pFunctionName,
         sh_name.append(option);
     };
 
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
     options.add("#version 300 es");
 #else
     options.add("#version 410");
@@ -419,7 +419,7 @@ HRESULT CRender::shader_compile(pcstr name, IReader* fs, pcstr pFunctionName,
     appendShaderOption(o.gbuffer_opt, "GBUFFER_OPTIMIZATION", "1");
 
     // Shader Model 4.1
-#if !defined(XR_PLATFORM_APPLE) && !defined(XR_PLATFORM_WEB) // WebGL2 has no textureGatherOffset either
+#if !defined(XR_PLATFORM_APPLE) && !defined(XR_RENDER_GLES) // GLES has no textureGatherOffset
     appendShaderOption(o.dx11_sm4_1, "SM_4_1", "1");
     // Despite the fact that glsl 4.1 is claimed to be supported on macOS,
     // the issue is that gatherTextureOffset requires compile-time constant offset argument.
@@ -559,7 +559,7 @@ HRESULT CRender::shader_compile(pcstr name, IReader* fs, pcstr pFunctionName,
         sources.compile(fs, options);
 
         // Compile the shader from sources
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
         std::string joined;
         for (size_t i = 0; i < sources.length(); ++i)
             joined += sources.get()[i];

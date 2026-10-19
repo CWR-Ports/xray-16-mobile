@@ -24,7 +24,9 @@ include(XRay.Configurations)
 
 include(utils)
 
-if (CMAKE_BUILD_TYPE STREQUAL "ReleaseMasterGold")
+if (CMAKE_SYSTEM_NAME STREQUAL "Android")
+    set(BUILD_SHARED_LIBS_DEFAULT_VALUE ON)
+elseif (CMAKE_BUILD_TYPE STREQUAL "ReleaseMasterGold")
     set(BUILD_SHARED_LIBS_DEFAULT_VALUE OFF)
 else()
     set(BUILD_SHARED_LIBS_DEFAULT_VALUE ON)

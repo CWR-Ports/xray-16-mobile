@@ -56,9 +56,11 @@ target_compile_definitions(xrCDB
     XRCDB_EXPORTS
 )
 
-set_target_properties(xrCDB PROPERTIES
-    PREFIX ""
-)
+if (NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
+    set_target_properties(xrCDB PROPERTIES
+        PREFIX ""
+    )
+endif()
 
 target_precompile_headers(xrCDB
     PRIVATE

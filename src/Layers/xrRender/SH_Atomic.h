@@ -149,7 +149,7 @@ struct ECORE_API SDeclaration : public xr_resource_flagged
     xr_vector<D3D_INPUT_ELEMENT_DESC> dx11_dcl_code;
 #elif defined(USE_OGL)
     GLuint dcl;
-#   ifdef XR_PLATFORM_WEB
+#   ifdef XR_RENDER_GLES
     GLuint bound_vb{};
     u32 bound_stride{};
     GLuint bound_ib{};

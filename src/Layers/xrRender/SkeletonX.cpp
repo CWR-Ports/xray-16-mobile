@@ -73,7 +73,7 @@ void CSkeletonX::_Render(CBackend& cmd_list, ref_geom& hGeom, u32 vCount, u32 iO
         // transfer matrices
         ref_constant array = cmd_list.get_c(s_bones_array_const);
         u32 count = RMS_bonecount;
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
         static thread_local xr_vector<Fvector4> rows;
         rows.resize(count * 3);
         for (u32 mid = 0; mid < count; mid++)

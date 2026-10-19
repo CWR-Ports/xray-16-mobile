@@ -146,7 +146,7 @@ private:
 #   endif
 #endif // DEBUG
 
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
     static inline u32 stencil_enable = u32(-1);
     static inline u32 stencil_func = u32(-1);
     static inline u32 stencil_ref = u32(-1);
@@ -195,7 +195,7 @@ private:
     //CTexture* textures_vs[5]; // dmap + 4 vs
     CTexture* textures_vs[CTexture::mtMaxVertexShaderTextures]; // 4 vs
     CTexture* textures_gs[CTexture::mtMaxGeometryShaderTextures]; // 4 vs
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
     static inline u32 occupied_texture_units = u32(-1);
 #endif
 #if defined(USE_DX11)
@@ -450,7 +450,7 @@ public:
                         u32 _zfail = D3DSTENCILOP_KEEP);
     IC void set_Z(u32 _enable);
     IC void set_ZFunc(u32 _func);
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
     IC void set_DepthWrite(u32 _enable);
     IC void set_Blend(u32 _enable, u32 _src, u32 _dst, u32 _srcAlpha, u32 _dstAlpha, u32 _op, u32 _opAlpha);
 #endif

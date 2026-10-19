@@ -304,9 +304,11 @@ target_compile_definitions(xrAICore
     XRAICORE_EXPORTS
 )
 
-set_target_properties(xrAICore PROPERTIES
-    PREFIX ""
-)
+if (NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
+    set_target_properties(xrAICore PROPERTIES
+        PREFIX ""
+    )
+endif()
 
 target_precompile_headers(xrAICore
     PRIVATE

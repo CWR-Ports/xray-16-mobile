@@ -89,7 +89,7 @@ void CRenderTarget::u_setrt(CBackend& cmd_list, const ref_rt& _1, const ref_rt& 
     VERIFY(dwWidth  != 0);
     VERIFY(dwHeight != 0);
 
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
     VERIFY(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
 #else
     [[maybe_unused]] GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -164,7 +164,7 @@ void CRenderTarget::u_setrt(CBackend& cmd_list, const ref_rt& _1, const ref_rt& 
     VERIFY(dwWidth[cmd_list.context_id]  != 0);
     VERIFY(dwHeight[cmd_list.context_id] != 0);
 
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
     VERIFY(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
 #else
     [[maybe_unused]] GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -194,7 +194,7 @@ void CRenderTarget::u_setrt(CBackend& cmd_list, u32 W, u32 H, GLuint _1, GLuint 
     cmd_list.set_RT(_3, 2);
     cmd_list.set_ZB(zb);
 
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
     VERIFY(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
 #else
     [[maybe_unused]] GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);

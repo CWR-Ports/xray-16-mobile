@@ -110,9 +110,11 @@ target_compile_definitions(xrScriptEngine
     XRSCRIPTENGINE_EXPORTS
 )
 
-set_target_properties(xrScriptEngine PROPERTIES
-    PREFIX ""
-)
+if (NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
+    set_target_properties(xrScriptEngine PROPERTIES
+        PREFIX ""
+    )
+endif()
 
 target_precompile_headers(xrScriptEngine
     PRIVATE

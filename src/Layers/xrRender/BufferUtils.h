@@ -23,7 +23,7 @@ void ConvertVertexDeclaration(const xr_vector<VertexElement>& declIn, xr_vector<
 
 #ifdef USE_OGL
 void SetGLVertexPointer(SDeclaration* decl, u32 baseOffset = 0);
-#   ifdef XR_PLATFORM_WEB
+#   ifdef XR_RENDER_GLES
 GLuint GetVertexArray(SDeclaration* decl, u32 baseVertex);
 bool IsStreamVertexBuffer(GLuint buffer);
 void ForgetVertexArrays(GLuint buffer);
@@ -177,7 +177,7 @@ public:
 
     void* Map(size_t offset, size_t size, bool flush = false);
     void Unmap();
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
     void Unmap(size_t writtenSize);
 #endif
     bool IsValid() const;
@@ -208,7 +208,7 @@ private:
 
     VertexBufferHandle m_DeviceBuffer{};
     u32 m_RefCounter{};
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
     xr_vector<u8> m_HostBuffer;
     size_t m_MappedOffset{};
     size_t m_MappedSize{};
@@ -224,7 +224,7 @@ public:
 
     void* Map(size_t offset, size_t size, bool flush = false);
     void Unmap();
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
     void Unmap(size_t writtenSize);
 #endif
     bool IsValid() const;
@@ -255,7 +255,7 @@ private:
 
     IndexBufferHandle m_DeviceBuffer{};
     u32 m_RefCounter{};
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
     xr_vector<u8> m_HostBuffer;
     size_t m_MappedOffset{};
     size_t m_MappedSize{};

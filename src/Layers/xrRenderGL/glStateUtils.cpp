@@ -164,8 +164,8 @@ GLint ConvertTextureAddressMode(u32 Mode)
     case D3DTADDRESS_CLAMP:
         return (GLint)GL_CLAMP_TO_EDGE;
     case D3DTADDRESS_BORDER:
-#ifdef XR_PLATFORM_WEB
-        return (GLint)GL_CLAMP_TO_EDGE; // no border mode in GLES 3.0
+#ifdef XR_RENDER_GLES
+        return (GLint)GL_CLAMP_TO_EDGE; // no border mode in GLES
 #else
         return (GLint)GL_CLAMP_TO_BORDER;
 #endif

@@ -33,7 +33,7 @@ void CRender::Screenshot(ScreenshotMode mode /*= SM_NORMAL*/, pcstr name /*= nul
         xr_vector<u8> pixels;
         pixels.resize(Device.dwWidth * Device.dwHeight * 3);
 
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
         xr_vector<u8> rgba;
         rgba.resize(Device.dwWidth * Device.dwHeight * 4);
         glReadPixels(0, 0, Device.dwWidth, Device.dwHeight, GL_RGBA, GL_UNSIGNED_BYTE, rgba.data());

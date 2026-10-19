@@ -440,9 +440,11 @@ target_compile_definitions(xrEngine
     PURE_DYNAMIC_CAST
 )
 
-set_target_properties(xrEngine PROPERTIES
-    PREFIX ""
-)
+if (NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
+    set_target_properties(xrEngine PROPERTIES
+        PREFIX ""
+    )
+endif()
 
 target_precompile_headers(xrEngine
     PRIVATE

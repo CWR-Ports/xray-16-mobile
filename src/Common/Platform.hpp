@@ -42,6 +42,12 @@
 #   error Unsupported platform
 #endif
 
+#if defined(XR_PLATFORM_WEB) || defined(XR_PLATFORM_ANDROID) || defined(__EMSCRIPTEN__)
+#   ifndef XR_RENDER_GLES
+#       define XR_RENDER_GLES
+#   endif
+#endif
+
 #if defined(_M_IX86) || defined(__i386__) || defined(_X86_)
 #   define XR_ARCHITECTURE_X86
 #   define _XRAY_ARCHITECTURE_MARKER "32-bit"

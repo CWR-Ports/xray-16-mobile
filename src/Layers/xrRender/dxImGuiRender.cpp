@@ -53,7 +53,7 @@ void dxImGuiRender::Frame()
 
 void dxImGuiRender::Render(ImDrawData* data)
 {
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
     if (data->CmdListsCount == 0)
         return;
 #endif

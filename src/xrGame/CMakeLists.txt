@@ -2515,8 +2515,12 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "LCC")
     message("Debug information generation is disabled for xrGame, because MCST lcc compiler does not support object files greater than 4 GB (EDG frontend bug).")
 endif()
 
+if (NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
+    set_target_properties(xrGame PROPERTIES
+        PREFIX ""
+    )
+endif()
 set_target_properties(xrGame PROPERTIES
-    PREFIX ""
     UNITY_BUILD_BATCH_SIZE 50
 )
 

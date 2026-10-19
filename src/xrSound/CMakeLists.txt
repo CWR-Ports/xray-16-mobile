@@ -142,9 +142,11 @@ target_compile_definitions(xrSound
     XRSOUND_EXPORTS
 )
 
-set_target_properties(xrSound PROPERTIES
-    PREFIX ""
-)
+if (NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
+    set_target_properties(xrSound PROPERTIES
+        PREFIX ""
+    )
+endif()
 
 target_precompile_headers(xrSound
     PRIVATE

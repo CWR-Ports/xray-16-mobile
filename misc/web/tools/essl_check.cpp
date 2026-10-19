@@ -10,12 +10,38 @@ namespace fs = std::filesystem;
 
 static std::string read_file(const fs::path& path)
 {
-    std::ifstream in(path, std::ios::binary);
-    if (!in)
-        throw std::runtime_error("cannot open " + path.string());
-    std::stringstream buffer;
-    buffer << in.rdbuf();
-    return buffer.str();
+    if (fs::exists(path))
+    {
+        std::ifstream in(path, std::ios::binary);
+        if (in)
+        {
+            std::stringstream buffer;
+            buffer << in.rdbuf();
+            return buffer.str();
+        }
+    }
+    fs::path parent = path.parent_path();
+    std::string targetLower = path.filename().string();
+    std::transform(targetLower.begin(), targetLower.end(), targetLower.begin(), [](unsigned char c) { return std::tolower(c); });
+    if (fs::exists(parent))
+    {
+        for (const auto& entry : fs::directory_iterator(parent))
+        {
+            std::string nameLower = entry.path().filename().string();
+            std::transform(nameLower.begin(), nameLower.end(), nameLower.begin(), [](unsigned char c) { return std::tolower(c); });
+            if (nameLower == targetLower)
+            {
+                std::ifstream in(entry.path(), std::ios::binary);
+                if (in)
+                {
+                    std::stringstream buffer;
+                    buffer << in.rdbuf();
+                    return buffer.str();
+                }
+            }
+        }
+    }
+    throw std::runtime_error("cannot open " + path.string());
 }
 
 static std::vector<std::string> g_sourceFiles; // index = #line source-string number

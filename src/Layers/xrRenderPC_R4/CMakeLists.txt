@@ -40,9 +40,11 @@ target_compile_definitions(xrRenderPC_R4
     USE_DX11
 )
 
-set_target_properties(xrRenderPC_R4 PROPERTIES
-    PREFIX ""
-)
+if (NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
+    set_target_properties(xrRenderPC_R4 PROPERTIES
+        PREFIX ""
+    )
+endif()
 
 target_precompile_headers(xrRenderPC_R4
     PRIVATE

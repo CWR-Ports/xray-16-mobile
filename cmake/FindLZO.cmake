@@ -30,6 +30,7 @@ endif()
 
 set(_lzo_SEARCH_DIRS
   ${LZO_ROOT_DIR}
+  ${CMAKE_PREFIX_PATH}
   /usr/local
 )
 

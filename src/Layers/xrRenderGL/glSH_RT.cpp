@@ -33,7 +33,7 @@ void CRT::create(LPCSTR Name, u32 w, u32 h, D3DFORMAT f, u32 SampleCount /*= 1*/
 
     // Get caps
     GLint max_width, max_height;
-#if defined(XR_PLATFORM_APPLE) || defined(XR_PLATFORM_WEB) // GLES 3.0 has no GL_MAX_FRAMEBUFFER_WIDTH either
+#if defined(XR_PLATFORM_APPLE) || defined(XR_RENDER_GLES) // GLES 3.0 has no GL_MAX_FRAMEBUFFER_WIDTH either
     // https://developer.apple.com/library/archive/documentation/GraphicsImaging/Conceptual/OpenGL-MacProgGuide/opengl_offscreen/opengl_offscreen.html
     CHK_GL(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_width));
     max_height = max_width;
@@ -90,7 +90,7 @@ void CRT::reset_end()
 void CRT::resolve_into(CRT& destination) const
 {
     glReadBuffer(GL_COLOR_ATTACHMENT0);
-#ifndef XR_PLATFORM_WEB // glDrawBuffers below covers it; glDrawBuffer does not exist in GLES
+#ifndef XR_RENDER_GLES // glDrawBuffers below covers it; glDrawBuffer does not exist in GLES
     glDrawBuffer(GL_COLOR_ATTACHMENT1);
 #endif
 
@@ -98,7 +98,7 @@ void CRT::resolve_into(CRT& destination) const
     RCache.set_RT(pRT, 0);
     RCache.set_RT(destination.pRT, 1);
 
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
     VERIFY(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
 #else
     [[maybe_unused]] GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -110,7 +110,7 @@ void CRT::resolve_into(CRT& destination) const
         GL_COLOR_BUFFER_BIT, GL_NEAREST));
 }
 
-#ifdef XR_PLATFORM_WEB
+#ifdef XR_RENDER_GLES
 void CRT::copy_into(CRT& destination) const
 {
     RCache.set_RT(pRT, 0);

@@ -1,4 +1,8 @@
-add_executable(xr_3da)
+if (CMAKE_SYSTEM_NAME STREQUAL "Android")
+    add_library(xr_3da SHARED)
+else()
+    add_executable(xr_3da)
+endif()
 
 target_sources(xr_3da PRIVATE
     entry_point.cpp
@@ -33,10 +37,25 @@ target_link_libraries(xr_3da
     xrGame
 )
 
-set_target_properties(xr_3da PROPERTIES
-    PREFIX ""
-)
-
-install(TARGETS xr_3da RUNTIME
-    DESTINATION "${CMAKE_INSTALL_BINDIR}"
-)
+if (CMAKE_SYSTEM_NAME STREQUAL "Android")
+    target_link_libraries(xr_3da
+        PRIVATE
+        SDL2::SDL2
+        android
+        log
+    )
+    set_target_properties(xr_3da PROPERTIES
+        OUTPUT_NAME "main"
+    )
+    install(TARGETS xr_3da
+        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    )
+else()
+    set_target_properties(xr_3da PROPERTIES
+        PREFIX ""
+    )
+    install(TARGETS xr_3da RUNTIME
+        DESTINATION "${CMAKE_INSTALL_BINDIR}"
+    )
+endif()

@@ -46,9 +46,11 @@ target_compile_definitions(xrParticles
     XR_PARTICLES_EXPORTS
 )
 
-set_target_properties(xrParticles PROPERTIES
-    PREFIX ""
-)
+if (NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
+    set_target_properties(xrParticles PROPERTIES
+        PREFIX ""
+    )
+endif()
 
 target_precompile_headers(xrParticles
     PRIVATE

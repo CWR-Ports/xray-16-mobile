@@ -77,6 +77,56 @@ int APIENTRY WinMain(HINSTANCE inst, HINSTANCE prevInst, char* commandLine, int 
 
     return result;
 }
+#elif defined(XR_PLATFORM_ANDROID)
+extern "C" XR_EXPORT int SDL_main(int argc, char* argv[])
+{
+    int result = EXIT_FAILURE;
+
+    try
+    {
+        char* commandLine = nullptr;
+        int i;
+        if (argc > 1)
+        {
+            size_t sum = 1;
+            for (i = 1; i < argc; ++i)
+                sum += strlen(argv[i]) + 1;
+
+            commandLine = (char*)xr_malloc(sum);
+            ZeroMemory(commandLine, sum);
+
+            for (i = 1; i < argc; ++i)
+            {
+                strcat(commandLine, argv[i]);
+                strcat(commandLine, " ");
+            }
+
+            result = entry_point(commandLine);
+
+            xr_free(commandLine);
+        }
+        else
+            result = entry_point("");
+    }
+    catch (const std::overflow_error& e)
+    {
+        _resetstkoflw();
+        FATAL_F("stack overflow: %s", e.what());
+    }
+    catch (const std::runtime_error& e)
+    {
+        FATAL_F("runtime error: %s", e.what());
+    }
+    catch (const std::exception& e)
+    {
+        FATAL_F("exception: %s", e.what());
+    }
+    catch (...)
+    {
+    }
+
+    return result;
+}
 #else
 int main(int argc, char *argv[])
 {
