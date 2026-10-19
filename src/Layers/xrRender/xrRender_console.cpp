@@ -585,7 +585,7 @@ public:
 };
 #endif
 
-class CCC_DofFar : public CCC_Float
+class XR_EXPORT CCC_DofFar : public CCC_Float
 {
 public:
     CCC_DofFar(LPCSTR N, float* V, float _min = 0.0f, float _max = 10000.0f) : CCC_Float(N, V, _min, _max) {}
@@ -613,7 +613,7 @@ public:
     virtual void Save(IWriter* /*F*/) { ; }
 };
 
-class CCC_DofNear : public CCC_Float
+class XR_EXPORT CCC_DofNear : public CCC_Float
 {
 public:
     CCC_DofNear(LPCSTR N, float* V, float _min = 0.0f, float _max = 10000.0f) : CCC_Float(N, V, _min, _max) {}
@@ -641,7 +641,7 @@ public:
     virtual void Save(IWriter* /*F*/) { ; }
 };
 
-class CCC_DofFocus : public CCC_Float
+class XR_EXPORT CCC_DofFocus : public CCC_Float
 {
 public:
     CCC_DofFocus(LPCSTR N, float* V, float _min = 0.0f, float _max = 10000.0f) : CCC_Float(N, V, _min, _max) {}
@@ -677,7 +677,7 @@ public:
     virtual void Save(IWriter* /*F*/) { ; }
 };
 
-class CCC_Dof : public CCC_Vector3
+class XR_EXPORT CCC_Dof : public CCC_Vector3
 {
 public:
     CCC_Dof(LPCSTR N, Fvector* V, const Fvector _min, const Fvector _max) : CCC_Vector3(N, V, _min, _max) { ; }
