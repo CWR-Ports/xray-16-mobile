@@ -125,11 +125,11 @@ Verify the full engine compiles cleanly with the NDK.
 Create a unified APK that runs **Shadow of Chernobyl**, **Clear Sky**, and **Call of Pripyat**. 
 NOTE remi: ask me for gamefiles, i'm not gonna provide it publicly here otherwise GSC will be after our asses
 
-- [ ] **5.1. Setup Android project structure** (`android/`):
+- [x] **5.1. Setup Android project structure** (`android/`):
   - `android/app/build.gradle` (NDK CMake integration, packaging `.so` libs).
   - `android/app/src/main/AndroidManifest.xml` (landscape orientation, storage permissions).
-- [ ] **5.2. Create `XRayActivity`** extending `org.libsdl.app.SDLActivity`.
-- [ ] **5.3. Create `LauncherActivity` (Game Selector)**:
+- [x] **5.2. Create `XRayActivity`** extending `org.libsdl.app.SDLActivity`.
+- [x] **5.3. Create `LauncherActivity` (Game Selector)**:
   - Frontend UI allowing the player to select:
     - S.T.A.L.K.E.R.: Shadow of Chernobyl (`-soc`)
     - S.T.A.L.K.E.R.: Clear Sky (`-cs`)

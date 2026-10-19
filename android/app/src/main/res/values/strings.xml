@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">OpenXRay</string>
+    <string name="launcher_title">OpenXRay</string>
+    <string name="mode_section_title">Game Mode</string>
+    <string name="mode_soc">S.T.A.L.K.E.R.: Shadow of Chernobyl (-soc)</string>
+    <string name="mode_cs">S.T.A.L.K.E.R.: Clear Sky (-cs)</string>
+    <string name="mode_cop">S.T.A.L.K.E.R.: Call of Pripyat (-cop)</string>
+    <string name="mode_custom">Custom Mod / Sandbox (-unlock_game_mode)</string>
+    <string name="dir_section_title">Game Data Directory</string>
+    <string name="dir_browse">Browse&#8230;</string>
+    <string name="dir_hint">/sdcard/stalker</string>
+    <string name="args_section_title">Command Line Arguments (optional)</string>
+    <string name="args_hint">-r2</string>
+    <string name="launch_button">Launch Game</string>
+</resources>

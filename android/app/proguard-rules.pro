@@ -1,0 +1,2 @@
+-keep class org.libsdl.app.** { *; }
+-keep class org.openxray.** { *; }

@@ -1,0 +1,68 @@
+plugins {
+    id 'com.android.application'
+}
+
+def prebuiltJniDir = layout.buildDirectory.dir("prebuiltJniLibs")
+
+tasks.register('syncJniLibs', Sync) {
+    into prebuiltJniDir.get().dir("arm64-v8a")
+    from("${rootDir}/../bin/aarch64/ReleaseMasterGold") {
+        include "*.so"
+    }
+    from("${rootDir}/../android-deps/arm64-v8a/lib") {
+        include "*.so"
+    }
+}
+
+android {
+    namespace "org.openxray"
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "org.openxray"
+        minSdk 26
+        targetSdk 34
+        versionCode 1
+        versionName "1.6.02"
+
+        ndk {
+            abiFilters "arm64-v8a"
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            debuggable true
+            jniDebuggable true
+        }
+    }
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['src/main/jniLibs', prebuiltJniDir]
+        }
+    }
+
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
+}
+
+tasks.matching { it.name.startsWith("merge") && it.name.endsWith("JniLibFolders") }.configureEach {
+    dependsOn 'syncJniLibs'
+}
+
+dependencies {
+    // Pure platform UI without heavyweight external dependencies
+}
