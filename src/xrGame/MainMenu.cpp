@@ -297,6 +297,12 @@ bool CMainMenu::ReloadUI()
     IFactoryObject* dlg = NEW_INSTANCE(xray::make_clsid("MAIN_MNU"));
     if (!dlg)
     {
+        Msg("! CMainMenu::ReloadUI: initial NEW_INSTANCE('MAIN_MNU') failed, attempting fallback registration of 'ui_main_menu.main_menu'...");
+        const_cast<CObjectFactory&>(object_factory()).register_script_class("ui_main_menu.main_menu", "MAIN_MNU", "main_menu");
+        dlg = NEW_INSTANCE(xray::make_clsid("MAIN_MNU"));
+    }
+    if (!dlg)
+    {
         Msg("! CMainMenu::ReloadUI: failed to instantiate MAIN_MNU");
         m_Flags.set(flActive | flNeedChangeCapture, FALSE);
         return false;

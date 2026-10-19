@@ -79,6 +79,7 @@ void CAI_Space::RegisterScriptClasses()
 #else
     string_path S;
     FS.update_path(S, "$game_config$", "script.ltx");
+    Msg("* CAI_Space::RegisterScriptClasses: reading '%s'", S);
     CInifile* l_tpIniFile = xr_new<CInifile>(S);
     R_ASSERT(l_tpIniFile);
     if (!l_tpIniFile->section_exist("common"))
@@ -88,12 +89,14 @@ void CAI_Space::RegisterScriptClasses()
         return;
     }
     shared_str registrators = READ_IF_EXISTS(l_tpIniFile, r_string, "common", "class_registrators", "");
+    Msg("* CAI_Space::RegisterScriptClasses: registrators = '%s'", registrators.c_str());
     xr_delete(l_tpIniFile);
     u32 registratorCount = _GetItemCount(registrators.c_str());
     string256 I;
     for (u32 i = 0; i < registratorCount; i++)
     {
         _GetItem(registrators.c_str(), i, I);
+        Msg("* CAI_Space::RegisterScriptClasses: executing registrator %u/%u: '%s'", i + 1, registratorCount, I);
         luabind::functor<void> result;
         if (!GEnv.ScriptEngine->functor(I, result))
         {
@@ -101,8 +104,21 @@ void CAI_Space::RegisterScriptClasses()
             GEnv.ScriptEngine->script_log(LuaMessageType::Error, "Cannot load class registrator %s!", I);
             continue;
         }
-        result(const_cast<CObjectFactory*>(&object_factory()));
+        try
+        {
+            result(const_cast<CObjectFactory*>(&object_factory()));
+            Msg("* CAI_Space::RegisterScriptClasses: registrator '%s' completed successfully", I);
+        }
+        catch (const std::exception& e)
+        {
+            Msg("! RegisterScriptClasses: exception executing '%s': %s", I, e.what());
+        }
+        catch (...)
+        {
+            Msg("! RegisterScriptClasses: unknown exception executing '%s'", I);
+        }
     }
+    Msg("* CAI_Space::RegisterScriptClasses: finished registering script classes");
 #endif
 }
 

@@ -18,9 +18,7 @@ void CObjectFactory::register_script_class(LPCSTR client_class, LPCSTR server_cl
 {
     ZoneScoped;
 
-#ifdef CONFIG_OBJECT_FACTORY_LOG_REGISTER
-    Msg("* CObjectFactory: registering script class '%s'", clsid);
-#endif
+    Msg("* CObjectFactory: registering script class '%s' (client: '%s', server: '%s')", clsid, client_class, server_class);
     luabind::object client;
     if (!GEnv.ScriptEngine->function_object(client_class, client, LUA_TUSERDATA))
     {
@@ -44,9 +42,7 @@ void CObjectFactory::register_script_class(LPCSTR unknown_class, LPCSTR clsid, L
 {
     ZoneScoped;
 
-#ifdef CONFIG_OBJECT_FACTORY_LOG_REGISTER
-    Msg("* CObjectFactory: registering script class '%s'", clsid);
-#endif
+    Msg("* CObjectFactory: registering script class '%s' ('%s')", clsid, unknown_class);
     luabind::object creator;
     if (!GEnv.ScriptEngine->function_object(unknown_class, creator, LUA_TUSERDATA))
     {

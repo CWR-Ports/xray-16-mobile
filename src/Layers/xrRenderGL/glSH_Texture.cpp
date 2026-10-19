@@ -98,8 +98,6 @@ void CTexture::apply_theora(CBackend& cmd_list, u32 dwStage)
         xr_vector<u32> frame(_w * _h);
         int framePos = 0;
         pTheora->DecompressFrame(frame.data(), 0, framePos);
-        for (u32& texel : frame) // BGRA -> RGBA
-            texel = (texel & 0xff00ff00u) | ((texel & 0x00ff0000u) >> 16) | ((texel & 0x000000ffu) << 16);
         CHK_GL(glTexSubImage2D(desc, 0, 0, 0, _w, _h, GL_RGBA, GL_UNSIGNED_BYTE, frame.data()));
         UNUSED(pBits);
         return;

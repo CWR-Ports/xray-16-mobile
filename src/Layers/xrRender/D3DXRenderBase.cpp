@@ -340,7 +340,7 @@ void D3DXRenderBase::SetCacheXform(Fmatrix& mView, Fmatrix& mProject)
 bool D3DXRenderBase::HWSupportsShaderYUV2RGB()
 {
 #ifdef XR_RENDER_GLES
-    return false;
+    return true;
 #else
     u32 v_dev = CAP_VERSION(HW.Caps.raster_major, HW.Caps.raster_minor);
     u32 v_need = CAP_VERSION(2, 0);
