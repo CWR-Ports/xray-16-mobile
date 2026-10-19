@@ -129,7 +129,13 @@ void CScriptEngine::reinit()
         lua_close(m_virtual_machine);
         UnregisterState(m_virtual_machine);
     }
+#if defined(XR_PLATFORM_ANDROID) || defined(XR_ARCHITECTURE_ARM64)
+    m_virtual_machine = luaL_newstate();
+#else
     m_virtual_machine = lua_newstate(lua_alloc, nullptr);
+    if (!m_virtual_machine)
+        m_virtual_machine = luaL_newstate();
+#endif
     if (!m_virtual_machine)
     {
         Log("! ERROR : Cannot initialize script virtual machine!");
@@ -879,6 +885,7 @@ void CScriptEngine::init(export_func exporter, bool loadGlobalNamespace)
     ZoneScoped;
 
     reinit();
+    R_ASSERT2(m_virtual_machine, "Cannot initialize script virtual machine!");
     luabind::open(lua());
 
     // Workarounds to preserve backwards compatibility with game scripts

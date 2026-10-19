@@ -35,6 +35,7 @@
         android:theme="@style/Theme.OpenXRay"
         android:hardwareAccelerated="true"
         android:requestLegacyExternalStorage="true"
+        android:allowNativeHeapPointerTagging="false"
         android:largeHeap="true">
 
         <!-- Minimal Plain Launcher Activity -->

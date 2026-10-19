@@ -78,8 +78,12 @@ int APIENTRY WinMain(HINSTANCE inst, HINSTANCE prevInst, char* commandLine, int 
     return result;
 }
 #elif defined(XR_PLATFORM_ANDROID)
+#include <malloc.h>
 extern "C" XR_EXPORT int SDL_main(int argc, char* argv[])
 {
+#if defined(M_BIONIC_SET_HEAP_TAGGING_LEVEL)
+    mallopt(M_BIONIC_SET_HEAP_TAGGING_LEVEL, M_HEAP_TAGGING_LEVEL_NONE);
+#endif
     int result = EXIT_FAILURE;
 
     try
