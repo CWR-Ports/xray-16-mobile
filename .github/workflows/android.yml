@@ -1,0 +1,103 @@
+name: Android
+
+on:
+  push:
+    branches-ignore:
+      - "dependabot/*"
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Android ARM64 APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    env:
+      CCACHE_DIR: "${{ github.workspace }}/.ccache"
+      CCACHE_COMPRESS: "true"
+      CCACHE_COMPRESSLEVEL: "6"
+      CCACHE_MAXSIZE: "1G"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Install host build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build ccache
+
+      - name: Set up Android NDK
+        run: |
+          NDK_VERSION="26.1.10909125"
+          NDK_PATH="${ANDROID_HOME}/ndk/${NDK_VERSION}"
+          if [ ! -d "${NDK_PATH}" ]; then
+            echo "Installing NDK ${NDK_VERSION} via sdkmanager..."
+            yes | "${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager" "ndk;${NDK_VERSION}"
+          fi
+          echo "ANDROID_NDK_HOME=${NDK_PATH}" >> $GITHUB_ENV
+          echo "ANDROID_NDK_ROOT=${NDK_PATH}" >> $GITHUB_ENV
+
+      - name: Cache Android target dependencies
+        id: cache-android-deps
+        uses: actions/cache@v4
+        with:
+          path: android-deps/arm64-v8a
+          key: android-deps-arm64-v8a-${{ hashFiles('scripts/build_android_deps.sh') }}
+
+      - name: Build Android target dependencies
+        if: steps.cache-android-deps.outputs.cache-hit != 'true'
+        run: |
+          chmod +x scripts/build_android_deps.sh
+          ./scripts/build_android_deps.sh
+
+      - name: Cache ccache
+        uses: actions/cache@v4
+        with:
+          path: .ccache
+          key: ccache-android-arm64-${{ github.ref }}-${{ github.sha }}
+          restore-keys: |
+            ccache-android-arm64-${{ github.ref }}-
+            ccache-android-arm64-
+
+      - name: Configure CMake
+        run: |
+          cmake -B build-android-arm64 -G Ninja \
+            -DCMAKE_TOOLCHAIN_FILE="${ANDROID_NDK_HOME}/build/cmake/android.toolchain.cmake" \
+            -DANDROID_ABI=arm64-v8a \
+            -DANDROID_PLATFORM=android-26 \
+            -DCMAKE_BUILD_TYPE=ReleaseMasterGold \
+            -DXRAY_USE_LUAJIT=ON \
+            -DMEMORY_ALLOCATOR=standard
+
+      - name: Build engine shared libraries
+        run: |
+          ninja -C build-android-arm64
+
+      - name: Assemble APK
+        run: |
+          chmod +x android/gradlew
+          ./android/gradlew -p android assembleDebug
+
+      - name: Upload OpenXRay APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: OpenXRay-Android-ARM64 (github-${{ github.run_number }})
+          path: android/app/build/outputs/apk/debug/OpenXRay.apk
+
+      - name: Publish latest nightly build
+        if: github.ref_name == 'dev' && github.event_name == 'push'
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload --clobber latest-nightly android/app/build/outputs/apk/debug/OpenXRay.apk || true
