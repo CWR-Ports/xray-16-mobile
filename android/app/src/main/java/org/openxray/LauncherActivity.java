@@ -125,8 +125,8 @@ public class LauncherActivity extends Activity
         File externalFiles = getExternalFilesDir(null);
         if (externalFiles != null && externalFiles.exists())
         {
-            File fallbackFs = new File(externalFiles, "fsgame.ltx");
-            if (fallbackFs.exists())
+            File fallbackFs = XRayActivity.findFsGameLtx(externalFiles);
+            if (fallbackFs != null && fallbackFs.exists())
             {
                 defaultDir = externalFiles.getAbsolutePath();
             }
@@ -138,6 +138,30 @@ public class LauncherActivity extends Activity
 
         String savedArgs = prefs.getString(KEY_CMD_ARGS, "");
         mEditCmdArgs.setText(savedArgs);
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        if (mEditGameDir != null)
+        {
+            validateDirectoryStatus(mEditGameDir.getText().toString());
+        }
+    }
+
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        if (mEditGameDir != null && mEditCmdArgs != null)
+        {
+            savePreferences(
+                getSelectedGameMode(),
+                mEditGameDir.getText().toString().trim(),
+                mEditCmdArgs.getText().toString().trim()
+            );
+        }
     }
 
     private void savePreferences(String mode, String dir, String args)
@@ -188,10 +212,10 @@ public class LauncherActivity extends Activity
             return;
         }
 
-        File fsltx = new File(dir, "fsgame.ltx");
-        if (fsltx.exists() && fsltx.isFile())
+        File fsltx = XRayActivity.findFsGameLtx(dir);
+        if (fsltx != null && fsltx.exists() && fsltx.isFile())
         {
-            mTxtDirStatus.setText("Status: fsgame.ltx found");
+            mTxtDirStatus.setText("Status: " + fsltx.getName() + " found");
             mTxtDirStatus.setTextColor(0xFF44BB44);
         }
         else
@@ -264,16 +288,24 @@ public class LauncherActivity extends Activity
                 if ("primary".equalsIgnoreCase(type))
                 {
                     String externalRoot = Environment.getExternalStorageDirectory().getAbsolutePath();
-                    return relativePath.isEmpty() ? externalRoot : externalRoot + "/" + relativePath;
+                    return relativePath.isEmpty() ? externalRoot : (externalRoot + "/" + relativePath).replaceAll("/+", "/");
+                }
+                else if ("raw".equalsIgnoreCase(type))
+                {
+                    return relativePath;
                 }
                 else
                 {
+                    if (relativePath.startsWith("/storage/"))
+                    {
+                        return relativePath;
+                    }
                     File secondary = new File("/storage/" + type + "/" + relativePath);
                     if (secondary.exists())
                     {
                         return secondary.getAbsolutePath();
                     }
-                    return "/storage/" + type + "/" + relativePath;
+                    return ("/storage/" + type + "/" + relativePath).replaceAll("/+", "/");
                 }
             }
         }
@@ -282,12 +314,23 @@ public class LauncherActivity extends Activity
         }
 
         String raw = uri.getPath();
-        if (raw != null && raw.contains(":"))
+        if (raw != null)
         {
-            String[] parts = raw.split(":", 2);
-            if (parts.length > 1)
+            if (raw.startsWith("/tree/raw:"))
             {
-                return Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + parts[1];
+                return raw.substring("/tree/raw:".length());
+            }
+            if (raw.contains(":"))
+            {
+                String[] parts = raw.split(":", 2);
+                if (parts.length > 1)
+                {
+                    if (parts[1].startsWith("/storage/") || parts[1].startsWith("/sdcard/"))
+                    {
+                        return parts[1];
+                    }
+                    return (Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + parts[1]).replaceAll("/+", "/");
+                }
             }
         }
 
@@ -338,10 +381,17 @@ public class LauncherActivity extends Activity
             return;
         }
 
-        File dir = new File(gameDir);
-        File fsltx = new File(dir, "fsgame.ltx");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager())
+        {
+            Toast.makeText(this, "Storage permission is required to read game files", Toast.LENGTH_LONG).show();
+            checkAndRequestPermissions();
+            return;
+        }
 
-        if (!fsltx.exists())
+        File dir = new File(gameDir);
+        File fsltx = XRayActivity.findFsGameLtx(dir);
+
+        if (fsltx == null || !fsltx.exists())
         {
             new AlertDialog.Builder(this)
                 .setTitle("fsgame.ltx not found")
@@ -367,3 +417,4 @@ public class LauncherActivity extends Activity
         startActivity(intent);
     }
 }
+

@@ -28,6 +28,34 @@ public class XRayActivity extends SDLActivity
 
     private String[] mLaunchArguments = null;
 
+    public static File findFsGameLtx(File dir)
+    {
+        if (dir == null || !dir.isDirectory())
+        {
+            return null;
+        }
+
+        File direct = new File(dir, "fsgame.ltx");
+        if (direct.exists())
+        {
+            return direct;
+        }
+
+        File[] files = dir.listFiles();
+        if (files != null)
+        {
+            for (File file : files)
+            {
+                if ("fsgame.ltx".equalsIgnoreCase(file.getName()))
+                {
+                    return file;
+                }
+            }
+        }
+
+        return direct;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -43,7 +71,6 @@ public class XRayActivity extends SDLActivity
                 workingDir = workingDir.trim();
                 System.setProperty("user.dir", workingDir);
 
-                // Attempt to update POSIX cwd via internal runtime if available
                 try
                 {
                     Class<?> libcoreClass = Class.forName("libcore.io.Libcore");
@@ -70,8 +97,9 @@ public class XRayActivity extends SDLActivity
             // 2. Working directory and fsgame.ltx forwarding
             if (workingDir != null && !workingDir.isEmpty())
             {
-                File fsltx = new File(workingDir, "fsgame.ltx");
-                if (fsltx.exists())
+                File dir = new File(workingDir);
+                File fsltx = findFsGameLtx(dir);
+                if (fsltx != null && fsltx.exists())
                 {
                     argsList.add("-fsltx");
                     argsList.add(fsltx.getAbsolutePath());
@@ -79,7 +107,7 @@ public class XRayActivity extends SDLActivity
                 else
                 {
                     argsList.add("-fsltx");
-                    argsList.add(new File(workingDir, "fsgame.ltx").getAbsolutePath());
+                    argsList.add(new File(dir, "fsgame.ltx").getAbsolutePath());
                 }
 
                 argsList.add("-dir");
@@ -147,16 +175,11 @@ public class XRayActivity extends SDLActivity
     @Override
     public void loadLibraries()
     {
-        // xrGame has DT_NEEDED for xrGameSpy; preload it if packaged
-        try
+        for (String lib : getLibraries())
         {
-            SDL.loadLibrary("xrGameSpy", this);
+            Log.i(TAG, "Loading native library: " + lib);
+            SDL.loadLibrary(lib, this);
         }
-        catch (Throwable ignored)
-        {
-        }
-
-        super.loadLibraries();
     }
 
     @Override
@@ -166,29 +189,40 @@ public class XRayActivity extends SDLActivity
             "SDL2",
             "openal",
             "ogg",
-            "vorbis",
-            "vorbisfile",
+            "theoradec",
             "theora",
+            "vorbis",
+            "vorbisenc",
+            "vorbisfile",
             "lzo2",
             "xrAPI",
             "xrCore",
-            "xrCDB",
-            "xrMaterialSystem",
-            "xrNetServer",
+            "xrGameSpy",
             "xrODE",
             "xrOPCODE",
-            "xrParticles",
-            "xrLuabind",
+            "xrCDB",
+            "xrMaterialSystem",
             "xrLuaJIT",
+            "xrLuabind",
             "xrScriptEngine",
-            "xrAICore",
-            "xrPhysics",
+            "xrNetServer",
             "xrSound",
-            "xrUICore",
             "xrEngine",
+            "xrAICore",
+            "xrParticles",
+            "xrPhysics",
+            "xrUICore",
             "xrRender_GL",
             "xrGame",
             "main"
         };
     }
+
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        SDLActivity.initialize();
+    }
 }
+

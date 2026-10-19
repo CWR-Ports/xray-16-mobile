@@ -106,22 +106,21 @@
                     <EditText
                         android:id="@+id/editGameDir"
                         android:layout_width="0dp"
-                        android:layout_height="44dp"
+                        android:layout_height="wrap_content"
+                        android:minHeight="44dp"
                         android:layout_weight="1"
                         android:hint="@string/dir_hint"
                         android:textColor="#FFFFFF"
-                        android:textColorHint="#666666"
+                        android:textColorHint="#888888"
                         android:textSize="13sp"
-                        android:singleLine="true"
-                        android:inputType="textUri"
-                        android:paddingStart="8dp"
-                        android:paddingEnd="8dp"
-                        android:background="#222222" />
+                        android:maxLines="1"
+                        android:inputType="textUri" />
 
                     <Button
                         android:id="@+id/btnBrowseDir"
                         android:layout_width="wrap_content"
-                        android:layout_height="44dp"
+                        android:layout_height="wrap_content"
+                        android:minHeight="44dp"
                         android:text="@string/dir_browse"
                         android:layout_marginStart="8dp" />
                 </LinearLayout>
@@ -148,16 +147,14 @@
                 <EditText
                     android:id="@+id/editCmdArgs"
                     android:layout_width="match_parent"
-                    android:layout_height="44dp"
+                    android:layout_height="wrap_content"
+                    android:minHeight="44dp"
                     android:hint="@string/args_hint"
                     android:textColor="#FFFFFF"
-                    android:textColorHint="#666666"
+                    android:textColorHint="#888888"
                     android:textSize="13sp"
-                    android:singleLine="true"
+                    android:maxLines="1"
                     android:inputType="text"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    android:background="#222222"
                     android:layout_marginBottom="16dp" />
 
                 <Button

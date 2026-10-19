@@ -53,6 +53,7 @@
         <!-- Main Engine Activity extending SDLActivity -->
         <activity
             android:name=".XRayActivity"
+            android:process=":game"
             android:exported="false"
             android:label="@string/app_name"
             android:screenOrientation="sensorLandscape"

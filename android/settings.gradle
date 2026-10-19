@@ -7,4 +7,33 @@ pluginManagement {
 }
 
 rootProject.name = "OpenXRay"
+
+File localProps = new File(rootDir, "local.properties")
+if (!localProps.exists()) {
+    String sdkDir = System.getenv("ANDROID_HOME") ?: System.getenv("ANDROID_SDK_ROOT")
+    if (!sdkDir) {
+        File defaultSdk = new File(System.getProperty("user.home"), "Android/Sdk")
+        if (defaultSdk.exists()) {
+            sdkDir = defaultSdk.absolutePath
+        }
+    }
+    String ndkDir = System.getenv("ANDROID_NDK_HOME") ?: System.getenv("ANDROID_NDK_ROOT")
+    if (!ndkDir) {
+        File defaultNdk = new File("/opt/android-ndk-r26b")
+        if (defaultNdk.exists()) {
+            ndkDir = defaultNdk.absolutePath
+        }
+    }
+    StringBuilder sb = new StringBuilder()
+    if (sdkDir) {
+        sb.append("sdk.dir=").append(sdkDir.replace('\\', '/')).append("\n")
+    }
+    if (ndkDir) {
+        sb.append("ndk.dir=").append(ndkDir.replace('\\', '/')).append("\n")
+    }
+    if (sb.length() > 0) {
+        localProps.text = sb.toString()
+    }
+}
+
 include ':app'
