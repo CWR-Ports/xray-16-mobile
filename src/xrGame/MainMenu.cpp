@@ -297,13 +297,20 @@ bool CMainMenu::ReloadUI()
     IFactoryObject* dlg = NEW_INSTANCE(xray::make_clsid("MAIN_MNU"));
     if (!dlg)
     {
+        Msg("! CMainMenu::ReloadUI: failed to instantiate MAIN_MNU");
         m_Flags.set(flActive | flNeedChangeCapture, FALSE);
         return false;
     }
     xr_delete(m_startDialog);
 
     m_startDialog = smart_cast<CUIDialogWnd*>(dlg);
-    VERIFY(m_startDialog);
+    if (!m_startDialog)
+    {
+        Msg("! CMainMenu::ReloadUI: failed to cast dlg (%p) to CUIDialogWnd", dlg);
+        xr_delete(dlg);
+        m_Flags.set(flActive | flNeedChangeCapture, FALSE);
+        return false;
+    }
     m_startDialog->m_bWorkInPause = true;
     m_startDialog->ShowDialog(true);
     return true;

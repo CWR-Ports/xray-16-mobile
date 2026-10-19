@@ -83,6 +83,7 @@ void CAI_Space::RegisterScriptClasses()
     R_ASSERT(l_tpIniFile);
     if (!l_tpIniFile->section_exist("common"))
     {
+        Msg("! RegisterScriptClasses: section [common] not found in %s", S);
         xr_delete(l_tpIniFile);
         return;
     }
@@ -96,6 +97,7 @@ void CAI_Space::RegisterScriptClasses()
         luabind::functor<void> result;
         if (!GEnv.ScriptEngine->functor(I, result))
         {
+            Msg("! RegisterScriptClasses: Cannot load class registrator %s!", I);
             GEnv.ScriptEngine->script_log(LuaMessageType::Error, "Cannot load class registrator %s!", I);
             continue;
         }

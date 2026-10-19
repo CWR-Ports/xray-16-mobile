@@ -24,6 +24,7 @@ void CObjectFactory::register_script_class(LPCSTR client_class, LPCSTR server_cl
     luabind::object client;
     if (!GEnv.ScriptEngine->function_object(client_class, client, LUA_TUSERDATA))
     {
+        Msg("! CObjectFactory: Cannot register client class '%s' (clsid '%s')", client_class, clsid);
         GEnv.ScriptEngine->script_log(LuaMessageType::Error, "Cannot register class %s", client_class);
         return;
     }
@@ -31,6 +32,7 @@ void CObjectFactory::register_script_class(LPCSTR client_class, LPCSTR server_cl
     luabind::object server;
     if (!GEnv.ScriptEngine->function_object(server_class, server, LUA_TUSERDATA))
     {
+        Msg("! CObjectFactory: Cannot register server class '%s' (clsid '%s')", server_class, clsid);
         GEnv.ScriptEngine->script_log(LuaMessageType::Error, "Cannot register class %s", server_class);
         return;
     }
@@ -48,6 +50,7 @@ void CObjectFactory::register_script_class(LPCSTR unknown_class, LPCSTR clsid, L
     luabind::object creator;
     if (!GEnv.ScriptEngine->function_object(unknown_class, creator, LUA_TUSERDATA))
     {
+        Msg("! CObjectFactory: Cannot register script class '%s' (clsid '%s')", unknown_class, clsid);
         GEnv.ScriptEngine->script_log(LuaMessageType::Error, "Cannot register class %s", unknown_class);
         return;
     }

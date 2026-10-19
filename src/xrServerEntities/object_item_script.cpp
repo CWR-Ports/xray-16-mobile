@@ -21,9 +21,15 @@ ObjectFactory::ClientObjectBaseClass* CObjectItemScript::client_object() const
     {
         object = m_client_creator();
     }
+    catch (const std::exception& e)
+    {
+        Msg("! Exception [%s] raised while creating client object", e.what());
+        return nullptr;
+    }
     catch (...)
     {
-        return (0);
+        Msg("! Unknown exception raised while creating client object");
+        return nullptr;
     }
     R_ASSERT(object);
     return (object->_construct());

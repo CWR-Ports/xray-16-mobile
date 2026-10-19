@@ -29,10 +29,13 @@ extern "C"
 XRGAME_API IFactoryObject* __cdecl xrFactory_Create(CLASS_ID clsid)
 {
     IFactoryObject* object = object_factory().client_object(clsid);
-#ifdef DEBUG
     if (!object)
-        return (0);
-#endif
+    {
+        string16 temp;
+        CLSID2TEXT(clsid, temp);
+        Msg("! xrFactory_Create: failed to create client object for clsid '%s'", temp);
+        return nullptr;
+    }
     // XXX nitrocaster XRFACTORY: set clsid during factory initialization
     object->GetClassId() = clsid;
     return (object);

@@ -472,6 +472,13 @@ if (NOT CMAKE_SYSTEM_NAME STREQUAL "OpenBSD" AND NOT CMAKE_SYSTEM_NAME STREQUAL 
     )
 endif()
 
+if (CMAKE_SYSTEM_NAME STREQUAL "Android")
+    target_link_libraries(xrCore
+        PRIVATE
+        log
+    )
+endif()
+
 target_compile_definitions(xrCore
     PRIVATE
     XRCORE_EXPORTS

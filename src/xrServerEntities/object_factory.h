@@ -75,6 +75,7 @@ public:
     void init();
 
     inline ClientObjectBaseClass* client_object(const CLASS_ID& clsid) const;
+    inline ClientObjectBaseClass* client_object(const CLASS_ID& clsid, bool no_assert) const;
     inline ServerObjectBaseClass* server_object(const CLASS_ID& clsid, LPCSTR section) const;
     inline ServerObjectBaseClass* server_object(const CLASS_ID& clsid, LPCSTR section, bool no_assert) const;
 

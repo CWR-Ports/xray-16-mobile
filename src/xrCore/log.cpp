@@ -6,6 +6,10 @@
 #include "log.h"
 #include "xrCore/Threading/Lock.hpp"
 
+#if defined(XR_PLATFORM_ANDROID)
+#include <android/log.h>
+#endif
+
 bool LogExecCB = true;
 string_path log_file_name{};
 bool no_log = true;
@@ -34,8 +38,12 @@ void AddOne(pcstr split)
 {
     ScopeLock scope{ &logCS };
 
+#if defined(XR_PLATFORM_ANDROID)
+    __android_log_print(ANDROID_LOG_INFO, "OpenXRay", "%s", split);
+#else
     OutputDebugString(split);
     OutputDebugString("\n");
+#endif
 
     LogFile.push_back(split);
 
