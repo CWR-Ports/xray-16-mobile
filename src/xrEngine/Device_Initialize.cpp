@@ -34,6 +34,9 @@ void SetSDLSettings(pcstr title)
 #ifdef  SDL_HINT_MOUSE_AUTO_CAPTURE
     SDL_SetHint(SDL_HINT_MOUSE_AUTO_CAPTURE, "0");
 #endif
+#if defined(XR_PLATFORM_ANDROID) && defined(SDL_HINT_ORIENTATIONS)
+    SDL_SetHint(SDL_HINT_ORIENTATIONS, "LandscapeLeft LandscapeRight");
+#endif
 }
 } // namespace
 
