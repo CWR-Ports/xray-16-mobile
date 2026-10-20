@@ -6,7 +6,11 @@ layout(location = TEXCOORD0) in float2 uv;
 
 void main()
 {
+#ifdef GL_ES
+	float3	YUV	= tex2D	(s_base, uv).rgb;
+#else
 	float3	YUV	= tex2D	(s_base, uv).bgr;
+#endif
 
 	float	Y	= YUV.z;
 	float	U	= YUV.y;
